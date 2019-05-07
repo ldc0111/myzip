@@ -39,12 +39,15 @@ void add_byte(bitqueue *q, const char *ch) {
         printf("error add_byte q or ch is NULL line: %d\n", __LINE__);
         exit(1);
     }
-    if(q->ind != 7) q->ind++;
-    else {
+    q->data[q->tail] += (*ch - '0') << q->ind;
+    //printf("add_byte ch %c q->ind %d %d\n", *ch,q->ind, q->data[q->tail]);
+    q->ind++;
+    if(q->ind == 8){ 
         q->tail += 1;
+        //刷新值
+        q->data[q->tail] = 0;
         q->ind = 0;
     }
-    q->data[q->tail] = q->data[q->tail] &  (*ch - '0') << q->ind;
     return ;
 }
 
@@ -56,7 +59,6 @@ int push_bitqueue(bitqueue *q, const char *s) {
     }
     int i = 0;
     for (; s[i]; i++) {
-        printf("%c",s[i]);
         if(s[i] == '0' || s[i] == '1') {
             add_byte(q, &s[i]);
         } else {
@@ -64,7 +66,6 @@ int push_bitqueue(bitqueue *q, const char *s) {
             exit(1);
         }
     }
-    printf("\n");
     return i;
 }
 
@@ -122,10 +123,9 @@ char * pop_ch_bitqueue(bitqueue *q, int *num) {
         printf("error pop_str_bitqueue str is null line: %d\n", __LINE__);
         exit(1);
     }
-    //printf("%x %d\n",q->data[0],q->ind);
+    if(q->ind == 0) return NULL;
     *ch = q->data[0];
     *num = q->ind;
-    //printf("%d \n", *num);
     return ch;
 }
 
@@ -135,13 +135,13 @@ void clear_bitqueue(bitqueue *q) {
     free(q);
     return ;
 }
-
+/*
 //test
 int main() {
     const char *str1 = "fasfasfda";
     const char *str2 = "0101";
     const char *str3 = "01011101";
-    const char *str4 = "0101010110101010101010101010101010101010101010101010";
+    const char *str4 = "01010101101010101010101010101010101010101010101010101";
     const char *str5 = "1";
 
     bitqueue *q = NULL;
@@ -152,7 +152,7 @@ int main() {
     printf("%d\n",push_bitqueue(q,str2));
     printf("%d\n", push_bitqueue(q,str3));
     printf("%d\n",push_bitqueue(q,str4));
-    //push_bitqueue(q,str5);
+    push_bitqueue(q,str5);
     //1
     //printf("%d\n",empty_bitqueue(q));
     //2
@@ -161,6 +161,6 @@ int main() {
     //3
     printf("str = %s\n", pop_str_bitqueue(q));
     printf("%x\n",*pop_ch_bitqueue(q, &n));
-
+    printf("%d\n", n);
     return 0;
-}
+}*/

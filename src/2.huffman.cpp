@@ -160,7 +160,7 @@ void write_code_list(node *root){
     extract_code(root,code,0,buff);
     for(int i = 0; i < 256; i++){
         if(code[i][0] == 0) continue;
-        fprintf(fp,"%d:%s\n",i,code[i]);
+        fprintf(fp,"%d %s\n",i,code[i]);
     }
 }
 
