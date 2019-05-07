@@ -26,9 +26,9 @@ void word_fre_count(const char *readfilename, long long *word_count,int *n) {
     ch = fgetc(fp);
     while (ch != EOF) {
         //putchar(ch);
-        ch = fgetc(fp);
         if(word_count[ch + BASE] == 0) (*n)++;
         word_count[ch + BASE]++;
+        ch = fgetc(fp);
     }
     fclose(fp);
     return ;

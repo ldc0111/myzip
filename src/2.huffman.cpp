@@ -28,8 +28,8 @@ typedef struct heap{
 
 node * getNewnode(int n){
     node *p = (node *)malloc(sizeof(node));
-    p->freq = n;
-    p->key = -1;
+    p->freq = n;//节点内部的权重
+    p->key = -1;//节点数值，非叶子节点没有数值
     p->lchild = NULL;
     p->rchild = NULL;
     return p;

@@ -98,6 +98,21 @@ void output_big(bignum *b) {
     return ;
 }
 
+void output_big_to_file(bignum *b,const char *file) {
+    if (b == NULL) {
+        printf("error output_big b is NULL : %d\n", __LINE__);
+        exit(1);
+    }
+    FILE *fp = NULL;
+    if((fp = fopen(file,"w")) == NULL) {
+        printf("error output_big_to_file  fp is NULL line: %d\n", __LINE__);
+        exit(1);
+    }
+    for (int i = b->size; i >= 0; i--) {
+        fprintf(fp,"%d", b->data[i]);
+    }
+    return ;
+}
 void clear_big(bignum *b) {
     if(b == NULL) return ;
     if (b->data != NULL) free(b->data);
