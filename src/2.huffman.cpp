@@ -164,6 +164,13 @@ void write_code_list(node *root){
     }
 }
 
+void close_huffman(node *root) {
+    if(root  == NULL) return ;
+    close_huff(root->lchild);
+    close_huff(root->rchild);
+    free(root);
+}
+
 int main(){
     heap *h = NULL;
     h = read_list();

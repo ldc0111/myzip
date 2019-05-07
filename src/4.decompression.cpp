@@ -31,12 +31,22 @@ void init_tr(const char *file, char (*tr)[40]){
 
 
 int main() {
-    char tr[256][40] = {0};
+    char tr[NUMCNT][40] = {0};
     const char *code_list_file = "./code_list";
-    const char *translate_file = "../samples/1.txt";
     const char *save_file = "./trans_file.myzip";
     const char * big_byte_file = "./byte_num";
     init_tr(code_list_file, tr);
+    HashTable *h;
+    int flag = 0;
+    h = init_hasttable(NUMCNT);
+    for (int i = 0; i < NUMCNT; i++) {
+        if(strlen(tr[i]) == 0) continue;
+        //printf("tr[%d] : %s\n", i, tr[i]);
+        insert_hash(h, tr[i], i);
+        //printf("search %s key %d\n", tr[i], search_hash(h,tr[i]));
+        flag += 1;
+    }
+    printf("%d\n", flag);
 
     return 0;
 }

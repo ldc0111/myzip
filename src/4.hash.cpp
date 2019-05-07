@@ -24,14 +24,22 @@ typedef struct HashTable{
 
 Node *init_node(char *str,Node *head,int key){
     Node *p = (Node *)malloc(sizeof(Node));
+    if(p == NULL) {
+        printf("error init_node  p is NULL line: %d\n", __LINE__);
+        exit(1);
+    }
     p->str = strdup(str);
+    if(p->str == NULL) {
+        printf("error init_node  p->str is NULL line: %d\n", __LINE__);
+        exit(1);
+    }
     p->key = key;
     p->next = head;
     return p;
 }
 
 HashTable * init_hasttable(int n){
-    HashTable * h = (HashTable * )malloc(sizeof(HashTable));
+    HashTable * h = (HashTable * )calloc(sizeof(HashTable), 1);
     h->size = n << 1;
     h->data = (Node **)calloc(sizeof(Node *),h->size);
     return h;
@@ -44,13 +52,25 @@ int BKDRHash(char *str){
 }
 
 int insert_hash(HashTable * h,char *str,int key){
+    if (h == NULL || str == NULL) {
+        printf("error insert_hash h or str is line: %d\n", __LINE__);
+        exit(1);
+    }
     int hash = BKDRHash(str);
     int ind = hash % h->size;
     h->data[ind] = init_node(str,h->data[ind],key);
+    if(h->data == NULL) {
+        printf("error insert_hash h->data is NULL", __LINE__);
+        exit(1);
+    }
     return 1;
 }
 
 int search_hash(HashTable * h, char *str){
+    if(h == NULL ||str == NULL) {
+        printf("error h or str is NULL line: %d\n", __LINE__);
+        exit(1);
+    }
     int hash = BKDRHash(str);
     int ind = hash % h->size;
     Node *p = h->data[ind];
