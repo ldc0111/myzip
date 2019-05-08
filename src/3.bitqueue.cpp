@@ -27,6 +27,7 @@ bitqueue* init_bitqueue() {
         exit(1);
     }
     q->data = (char *)calloc(sizeof(char), BITSIZE);
+    q->size = BITSIZE;
     if (q->data == NULL) {
         printf("error init_bitqueue q->ch is null line: %d\n", __LINE__);
         exit(1);
@@ -85,13 +86,13 @@ int empty_bitqueue80(bitqueue *q) {
         printf("error empty_bitqueue80 q is NULL line: %d \n",__LINE__);
         exit(1);
     }
-    if(q->tail *1.25 > q->size) {
+    if(q->tail * 1.25 > q->size) {
         return 1;
     }
     return 0;
 }
 
-char * pop_str_bitqueue(bitqueue *q) {
+char * pop_str_bitqueue(bitqueue *q,int *len) {
     if(q == NULL) {
         printf("error pop_str_bitqueue q is null line: %d\n", __LINE__);
         exit(1);
@@ -107,24 +108,21 @@ char * pop_str_bitqueue(bitqueue *q) {
         str[i] = q->data[i];
     }
     str[size] = 0;
+    *len = size;
     q->data[0] = q->data[q->tail];
     q->tail = 0;
     //printf("str = %s\n",str);
     return str;
 }
 
-char * pop_ch_bitqueue(bitqueue *q, int *num) {
+char  pop_ch_bitqueue(bitqueue *q, int *num) {
     if(q == NULL) {
         printf("error pop_ch_bitqueue q is null line: %d\n", __LINE__);
         exit(1);
     }
-    char *ch = (char *)malloc(sizeof(char) * 1);
-    if (ch == NULL) {
-        printf("error pop_str_bitqueue str is null line: %d\n", __LINE__);
-        exit(1);
-    }
-    if(q->ind == 0) return NULL;
-    *ch = q->data[0];
+    char ch;
+    if(q->ind == 0) return 0;
+    ch = q->data[0];
     *num = q->ind;
     return ch;
 }

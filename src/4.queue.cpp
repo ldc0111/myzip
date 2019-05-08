@@ -50,7 +50,7 @@ int empty_queue(Queue *q){
 }
 
 int count_queue(Queue *q) {
-    return q->length - q->cnt;
+    return q->cnt;
 }
 
 void pop_queue(Queue *q){

@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "./3.bitqueue.cpp"
-#include "./3.maxnum.cpp"
 #define NUMCNT 256
 #define BASE 128
 
@@ -30,18 +29,16 @@ void init_tr(const char *file, char (*tr)[40]){
     fclose(fp);
 }
 
-void translate_func(const char *file, const char *save_file, const char *big_byte_file,char (*tr)[40]) {
+void translate_func(const char *file, const char *save_file,const char *byte_file, char (*tr)[40]) {
     if(file == NULL) {
         printf("error translate_func file is NULL line: %d\n", __LINE__);
         exit(1);
     }
-    FILE *fp = NULL,*fpsave = NULL,*fpbyte = NULL;
+    FILE *fp = NULL,*fpsave = NULL,*fp_byte = NULL;
     char ch, *str;
-    int num;
+    int len = 0;
     bitqueue *q = NULL;
-    bignum *b = NULL;
     q = init_bitqueue();
-    b = init_bignum();
     if((fp = fopen(file,"r")) == NULL) {
         printf("error read file line: %d\n", __LINE__);
         exit(1);
@@ -56,27 +53,32 @@ void translate_func(const char *file, const char *save_file, const char *big_byt
         //直接这么加有问题
         //ch = ch + BASE; 
         //printf("%d\n",ch + BASE);
+        //printf("%c",ch);
         int ind = ch + BASE;
 
         int n = push_bitqueue(q, tr[ind]);
-        add_big(b,n);
         //队列快满了
         if(empty_bitqueue80(q)) {
             //将编码后的数据压入文件
-            str = pop_str_bitqueue(q);
-            fprintf(fpsave,"%s",str);
+            str = pop_str_bitqueue(q, &len);
+            for (int i = 0; i < len; i++) {
+                fputc(str[i],fpsave);
+            }
         }
         ch = fgetc(fp);
     }
-    str = pop_ch_bitqueue(q, &num);
-    fprintf(fpsave,"%c", str[0]);
-
-    if((fpbyte = fopen(big_byte_file, "w")) == NULL) {
-        printf("error big_byte_file  line: %d\n", __LINE__);
+    str = pop_str_bitqueue(q, &len);
+    for (int i = 0; i < len; i++) {
+        fputc(str[i],fpsave);
+    }
+    ch = pop_ch_bitqueue(q, &len);
+    if(len != 0)
+    fprintf(fpsave,"%c", ch);
+    if((fp_byte = fopen(byte_file,"w")) == NULL) {
+        printf("error byte_file line: %d\n", __LINE__);
         exit(1);
     }
-    
-    output_big_to_file(b,big_byte_file);
+    fprintf(fp_byte,"%d\n",len);
 
     fclose(fpsave);
     fclose(fp);
@@ -89,14 +91,15 @@ int main() {
     const char *code_list_file = "./code_list";
     const char *translate_file = "../samples/1.txt";
     const char *save_file = "./trans_file.myzip";
-    const char * big_byte_file = "./byte_num";
+    const char *byte_num = "./byte_num";
     init_tr(code_list_file, tr);
-    /*
+    /* 
     for (int i = 0; i < 256; i++) {
         if(strlen(tr[i]) <= 0) continue;
         printf("%d %s\n", i, tr[i]);
-    }*/
-    translate_func(translate_file, save_file, big_byte_file,tr);
+    }
+    */
+    translate_func(translate_file, save_file,byte_num, tr);
     printf("over!\n");
     return 0;
 }

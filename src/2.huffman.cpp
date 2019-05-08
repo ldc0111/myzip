@@ -95,7 +95,8 @@ node* builld_haffman(heap *h){
 
 void preorder(node *root){
     if(root == NULL) return ;
-    printf("%d", root->freq);
+    //printf("%d", root->freq);
+    printf("%d",root->key);
     if(root->lchild != NULL || root->rchild != NULL){
         printf("(");
         preorder(root->lchild);

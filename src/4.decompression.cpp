@@ -71,13 +71,19 @@ void redu_func(int key, FILE *fp) {
     fputc(key,fp);
 }
 
-void reduction_func(node *root, const char *save_file, const char *reduction_file) {
+void reduction_func(node *root, const char *save_file,const char *byte_file, const char *reduction_file) {
     if (root == NULL || save_file == NULL|| reduction_file == NULL) {
         printf("error reduction_func root ,save_file or reduction_file is NULL line: %d\n", __LINE__);
         exit(1);
     }
     FILE *fp_s = init_filep(save_file,"fp_s","r");
     FILE *fp_r = init_filep(reduction_file,"fp_r", "w");
+    FILE *fp_b = init_filep(byte_file, "fp_b", "r");
+    int len = 0;
+    fscanf(fp_b,"%d", &len);
+    //最后几个是无效字符
+    len = 8 - len;
+    //printf("%d\n",len);
     Queue *q = init_queue(QUEQUSIZE);
     char ch = fgetc(fp_s);
     node *p = root;
@@ -87,7 +93,7 @@ void reduction_func(node *root, const char *save_file, const char *reduction_fil
             push_queue(q, te);
         }
 
-        while(!empty_queue(q)) {
+        while(count_queue(q) > len) {
             char te = front_queue(q);
             pop_queue(q);
             if(te == '0') {
@@ -115,20 +121,32 @@ void reduction_func(node *root, const char *save_file, const char *reduction_fil
         ch = fgetc(fp_s);
 
     }
+    fclose(fp_b);
     fclose(fp_s);
     fclose(fp_r);
 }
-
+void preorder(node *root){
+    if(root == NULL) return ;
+    //printf("%d", root->freq);
+    printf("%d",root->key);
+    if(root->lchild != NULL || root->rchild != NULL){
+        printf("(");
+        preorder(root->lchild);
+        printf(",");
+        preorder(root->rchild);
+        printf(")");
+    }
+}
 
 int main() {
     char tr[NUMCNT][40] = {0};
     const char * code_list_file = "./code_list";
     const char * save_file = "./trans_file.myzip";
-    const char * big_byte_file = "./byte_num";
     const char * reduction_file = "./reduction_file";
+    const char *byte_file = "./byte_num";
     init_tr(code_list_file, tr);
     node *huff_root = init_huff_tree(tr);
-
-    reduction_func(huff_root, save_file, reduction_file);
+    //preorder(huff_root);
+    reduction_func(huff_root, save_file, byte_file, reduction_file);
     return 0;
 }
