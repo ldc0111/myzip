@@ -166,8 +166,8 @@ void write_code_list(node *root){
 
 void close_huffman(node *root) {
     if(root  == NULL) return ;
-    close_huff(root->lchild);
-    close_huff(root->rchild);
+    close_huffman(root->lchild);
+    close_huffman(root->rchild);
     free(root);
 }
 

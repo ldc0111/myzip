@@ -61,7 +61,7 @@ void pop_queue(Queue *q){
     return ;
 }
 
-int front_queue(Queue *q){
+char front_queue(Queue *q){
     if(empty_queue(q)) return 0;
     return q->data[q->head];
 }
@@ -80,10 +80,10 @@ void output_queue(Queue *q) {
     }
     printf(" ]\n");
 }
-
+/*
 int main() {
 
 
 
     return 0;
-}
+}*/

@@ -61,9 +61,8 @@ int main() {
     word_fre_count(readfilename, word_count, &n);
     /*
     for (int i = 0; i < NUMCNT; i++) {
-        printf("%d ", word_count[i]);
-    }
-    */
+        printf("i = %d %d \n", i,word_count[i]);
+    }*/
     write_file_list(writefilename, word_count,&n);
 
 

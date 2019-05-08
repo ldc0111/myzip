@@ -8,9 +8,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "./4.huff.cpp" 
+#include "./4.queue.cpp"
 
 #define NUMCNT 256
-//#define BASE 128
+#define BASE 128
+#define QUEQUSIZE 1000000
 
 void init_tr(const char *file, char (*tr)[40]){
     if(file == NULL || tr == NULL) {
@@ -55,6 +57,19 @@ FILE* init_filep(const char *file,const char *str,const char *rw){
     return fp;
 }
 
+void redu_func(int key, FILE *fp) {
+    if(fp == NULL) {
+        printf("error fp is NULL line:%d\n", __LINE__);
+        exit(1);
+    }
+    if (key < 0 || key > 256) {
+        printf("redu_func key  is Illegal line: %d\n", __LINE__);
+        exit(1);
+    }
+    key -= BASE;
+    printf("%c",key);
+    fputc(key,fp);
+}
 
 void reduction_func(node *root, const char *save_file, const char *reduction_file) {
     if (root == NULL || save_file == NULL|| reduction_file == NULL) {
@@ -63,7 +78,47 @@ void reduction_func(node *root, const char *save_file, const char *reduction_fil
     }
     FILE *fp_s = init_filep(save_file,"fp_s","r");
     FILE *fp_r = init_filep(reduction_file,"fp_r", "w");
+    Queue *q = init_queue(QUEQUSIZE);
+    char ch = fgetc(fp_s);
+    node *p = root;
+    while (ch != EOF) {
+        for (int i = 0; i < 8; i++) {
+            char te = ((ch >> i) & 1) + '0';
+            push_queue(q, te);
+        }
+
+        while(!empty_queue(q)) {
+            char te = front_queue(q);
+            pop_queue(q);
+            if(te == '0') {
+                if(p->lchild == NULL && p->key != -1) {
+                    redu_func(p->key, fp_r);
+                    p = root;
+                }
+                p = p->lchild;
+            } else if(te == '1') {
+                if (p->rchild == NULL && p->key != -1) {
+                    redu_func(p->key, fp_r);
+                    p = root;
+                }
+                p = p->rchild;
+            } else {
+                printf("error reduction_func queue is line: %d\n",__LINE__);
+                exit(1);
+            }
+            //防止最后一次出出队
+            if(p->lchild == NULL && p->rchild == NULL && p->key != -1) {
+                redu_func(p->key, fp_r);
+                p = root;
+            }
+        }
+        ch = fgetc(fp_s);
+
+    }
+    fclose(fp_s);
+    fclose(fp_r);
 }
+
 
 int main() {
     char tr[NUMCNT][40] = {0};
@@ -74,6 +129,6 @@ int main() {
     init_tr(code_list_file, tr);
     node *huff_root = init_huff_tree(tr);
 
-    reduction_func(root, save_file, reduction_file);
+    reduction_func(huff_root, save_file, reduction_file);
     return 0;
 }
