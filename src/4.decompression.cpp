@@ -67,7 +67,7 @@ void redu_func(int key, FILE *fp) {
         exit(1);
     }
     key -= BASE;
-    printf("%c",key);
+    //printf("%c",key);
     fputc(key,fp);
 }
 
@@ -82,12 +82,14 @@ void reduction_func(node *root, const char *save_file,const char *byte_file, con
     int len = 0;
     fscanf(fp_b,"%d", &len);
     //最后几个是无效字符
-    len = 8 - len;
+    if(len != 0) len = 8 - len;
     //printf("%d\n",len);
     Queue *q = init_queue(QUEQUSIZE);
     char ch = fgetc(fp_s);
     node *p = root;
-    while (ch != EOF) {
+    int falg = 0;
+    while (!feof(fp_s)) {
+        //printf("%d\n",falg++);
         for (int i = 0; i < 8; i++) {
             char te = ((ch >> i) & 1) + '0';
             push_queue(q, te);

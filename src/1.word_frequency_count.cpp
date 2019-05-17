@@ -13,7 +13,7 @@
 
 void word_fre_count(const char *readfilename, long long *word_count,int *n) {
     if(word_count == NULL || readfilename == NULL) {
-        printf("error word_count or readfilename line :%d \n",__LINE__);
+        printf("error word_count or readfilename line : %d\n",__LINE__);
         exit(1);
     }
     FILE *fp;
@@ -24,7 +24,7 @@ void word_fre_count(const char *readfilename, long long *word_count,int *n) {
     }
 
     ch = fgetc(fp);
-    while (ch != EOF) {
+    while (!feof(fp)) {
         //putchar(ch);
         if(word_count[ch + BASE] == 0) (*n)++;
         word_count[ch + BASE]++;
@@ -56,7 +56,7 @@ int main() {
     char ch;
     int n = 0;
     long long word_count[NUMCNT] = {0};
-    const char *readfilename = "../samples/1.txt";
+    const char *readfilename = "../samples/3.jpg";
     const char *writefilename ="./list";
     word_fre_count(readfilename, word_count, &n);
     /*

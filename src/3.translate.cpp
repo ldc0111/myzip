@@ -49,7 +49,7 @@ void translate_func(const char *file, const char *save_file,const char *byte_fil
     }
     
     ch = fgetc(fp);
-    while (ch != EOF) {
+    while (!feof(fp)) {
         //直接这么加有问题
         //ch = ch + BASE; 
         //printf("%d\n",ch + BASE);
@@ -64,6 +64,7 @@ void translate_func(const char *file, const char *save_file,const char *byte_fil
             for (int i = 0; i < len; i++) {
                 fputc(str[i],fpsave);
             }
+            len = 0;
         }
         ch = fgetc(fp);
     }
@@ -71,6 +72,7 @@ void translate_func(const char *file, const char *save_file,const char *byte_fil
     for (int i = 0; i < len; i++) {
         fputc(str[i],fpsave);
     }
+    len = 0;
     ch = pop_ch_bitqueue(q, &len);
     if(len != 0)
     fprintf(fpsave,"%c", ch);
@@ -78,6 +80,7 @@ void translate_func(const char *file, const char *save_file,const char *byte_fil
         printf("error byte_file line: %d\n", __LINE__);
         exit(1);
     }
+    printf("len %d\n",len);
     fprintf(fp_byte,"%d\n",len);
 
     fclose(fpsave);
@@ -89,7 +92,7 @@ void translate_func(const char *file, const char *save_file,const char *byte_fil
 int main() {
     char tr[256][40] = {0};
     const char *code_list_file = "./code_list";
-    const char *translate_file = "../samples/1.txt";
+    const char *translate_file = "../samples/3.jpg";
     const char *save_file = "./trans_file.myzip";
     const char *byte_num = "./byte_num";
     init_tr(code_list_file, tr);
